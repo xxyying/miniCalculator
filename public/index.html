@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("button").click(function(){
+    	var num1 = parseInt($("#first_input").val());
+    	var op = $("#op").val();
+    	var num2 = parseInt($("#second_input").val())
+
+        $.ajax({ type: 'GET', url: '/abc',
+	        data: { first_input: num1, operator: op, second_input: num2} ,
+	        contentType: 'application/json; charset=utf-8',
+	        success: function (response) {
+	           // alert(response.toString());
+	            $("#result").text(response.toString());
+	        },
+	        error: function () {
+	            alert("error");
+	        }});
+    });
+});
+</script>
+</head>
+<body>
+	<input type="text" id="first_input" placeholder="1st Number">
+	<input type="text" id="op" placeholder="Operator">
+	<input type="text" id="second_input" placeholder="2nd Number">
+	<div><button>Submit</button></div>
+	<div id="result">result</div>
+</body>
+</html>
+

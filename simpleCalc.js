@@ -1,100 +1,45 @@
-// Load the http module to create an http server.
-var http = require('http');
-var url = require('url');
-var util = require('util');
-var fs = require('fs');
-// var querystring = require('querystring');
+var express = require('express');
+var app = express();
 
+app.use(express.static('public'));
 
-var server = http.createServer(function(req, res) {
-	if (req.method == 'GET') {
-		console.log("get");
-		displayForm(res);
-		//ajax();
-	} else if (req.method == 'POST') {
-		console.log("post");
-		displayResult(req, res);
-	} else {
-		res.writeHead(200);
-    	res.end();
-	};
+app.get('/', function (req, res) {
 
-}).listen(3000);
+       res.render('index');
 
-function ajax() {
+});
 
-}
+app.get('/abc', function (req, res) {
 
+       console.log("input: ", req.query.first_input, req.query.operator,req.query.second_input); 
+       var operator =  req.query.operator;
+       var result;
+       var inputOne = parseFloat(req.query.first_input);
+       var inputTwo = parseFloat(req.query.second_input); 
+       if (operator == "+"){
+                  result = inputOne + inputTwo;
+       }
+       if (operator == "-"){
+                  result = inputOne - inputTwo;
+       }
+       if (operator == "*"){
+                  result = inputOne * inputTwo;
+       }
+       if (operator == "/"){
+                  result = inputOne / inputTwo;
+       }
+       //var sum = parseFloat(req.query.first_input) + parseFloat(req.query.second_input);  
+       console.log('result= ',result); 
 
-function displayForm(res) {
-	fs.readFile('index.html', function(err, data){
-		res.writeHead(200, {
-			'Content-Type': 'text/html',
-			'Content-Length': data.length
-		});
-		res.write(data);
-		res.end();
-	});
-}
+       res.send("result is " + result); 
 
-function displayResult(req, res) {
-req.on('data', function(chunk) {
+});
 
-      //grab form data as string
-      var formdata = chunk.toString();
-      formdata = formdata.split("&");
-      console.log(formdata);
+var server = app.listen(8081, function () {
 
-      //grab A and B values
-      var a = eval(formdata[0]);
-      //console.log("value of a is:" + a);
-      var op = formdata[1].split("=")[1];
-      console.log("value of op is:" + op);
-      var b = eval(formdata[2]);
-      //console.log("value of b is:" + b);
+  var host = server.address().address
+  var port = server.address().port
 
-      var result = 0;
-      if (op == "%2B") {
-      	result = sum(a, b);
-      } else if (op == '-') {
-      	result = sub(a, b);
-      } else if (op == '*') {
-      	result = mul(a, b);
-      } else if (op == "%2F") {
-      	result = div(a, b);
-      } else {
-      	result = "NA";
-      }
+  console.log("应用实例，访问地址为 http://%s:%s", host, port)
 
-      //fill in the result and form values
-      form = result.toString();
-      console.log("Result is: " + form);
-
-      //respond
-      res.setHeader('Content-Type', 'text/html');
-      res.writeHead(200);
-      res.end(form);
-
-    });
-}
-
-console.log("Server running at http://localhost:3000/")
-
-
-function sum(a, b) {
-	return Number(a) + Number(b);
-}
-
-function sub(a, b) {
-	return Number(a) - Number(b);
-}
-
-function mul(a, b) {
-	return Number(a) * Number(b);
-}
-
-function div(a, b) {
-	return Number(a) / Number(b);
-}
-
-
+})
